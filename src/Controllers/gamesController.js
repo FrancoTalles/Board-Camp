@@ -14,7 +14,7 @@ export async function criarJogo(req, res) {
   const { name, image, stockTotal, pricePerDay } = req.body;
 
   try {
-    if (stockTotal <= 0 || pricePerDay <= 0) {
+    if (!name || stockTotal <= 0 || pricePerDay <= 0) {
       return res.sendStatus(400);
     }
 
