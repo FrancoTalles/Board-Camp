@@ -14,10 +14,6 @@ export async function criarJogo(req, res) {
   const { name, image, stockTotal, pricePerDay } = req.body;
 
   try {
-    if (!name || stockTotal <= 0 || pricePerDay <= 0) {
-      return res.sendStatus(400);
-    }
-
     const existe = await db.query(`SELECT * FROM games WHERE name = $1`, [
       name,
     ]);
