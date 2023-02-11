@@ -3,7 +3,7 @@ import { db } from "../Database/databaseConnection.js";
 export async function buscarClientes(req, res) {
   try {
     const customer = await db.query(
-      "SELECT customers.id, customers.name, customers.phone, customers.cpf, TO_CHAR(customers.birthday, 'YYYY-MM-DD') FROM customers;"
+      "SELECT customers.id, customers.name, customers.phone, customers.cpf, TO_CHAR(customers.birthday, 'YYYY-MM-DD') AS birthday FROM customers;"
     );
 
     res.send(customer.rows);
@@ -15,7 +15,7 @@ export async function buscarClientes(req, res) {
 export async function buscarClientePorId(req, res) {
   const { id } = req.params;
   try {
-    const customer = await db.query(`SELECT * FROM customers WHERE id = $1;`, [
+    const customer = await db.query(`SELECT customers.id, customers.name, customers.phone, customers.cpf, TO_CHAR(customers.birthday, 'YYYY-MM-DD') AS birthday FROM customers WHERE id = $1;`, [
       id,
     ]);
 
