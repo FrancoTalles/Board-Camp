@@ -56,11 +56,12 @@ export async function atualizarCliente(req, res) {
   const { name, phone, cpf, birthday } = req.body;
 
   try {
-    const costumer = await db.query(`SELECT * FROM customers WHERE id = $1;`, [
-      id,
-    ]);
+    const customerExistente = await db.query(
+      `SELECT * FROM customers WHERE id = $1;`,
+      [id]
+    );
 
-    if (costumer.rowCount === 0) {
+    if (customerExistente.rowCount === 0) {
       return res.sendStatus(404);
     }
 
