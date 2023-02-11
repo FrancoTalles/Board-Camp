@@ -2,7 +2,7 @@ import { db } from "../Database/databaseConnection.js";
 
 export async function buscarJogos(req, res) {
   try {
-    const games = await db.query("SELECT * FROM games");
+    const games = await db.query("SELECT * FROM games;");
 
     res.send(games.rows);
   } catch (error) {
@@ -14,7 +14,7 @@ export async function criarJogo(req, res) {
   const { name, image, stockTotal, pricePerDay } = req.body;
 
   try {
-    const existe = await db.query(`SELECT * FROM games WHERE name = $1`, [
+    const existe = await db.query(`SELECT * FROM games WHERE name = $1;`, [
       name,
     ]);
 

@@ -4,6 +4,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import gamesRouter from "./Routers/gamesRouters.js";
+import customersRouter from "./Routers/customersRouters.js";
 
 // Configurações
 
@@ -14,7 +15,7 @@ server.use(express.json());
 
 // Rotas
 
-server.use([gamesRouter]);
+server.use([gamesRouter, customersRouter]);
 
 // Porta
 
