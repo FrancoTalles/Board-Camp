@@ -2,7 +2,9 @@ import { db } from "../Database/databaseConnection.js";
 
 export async function buscarClientes(req, res) {
   try {
-    const customer = await db.query("SELECT * FROM customers;");
+    const customer = await db.query(
+      "SELECT customers.id, customers.name, customers.phone, customers.cpf, TO_CHAR(customers.birthday, 'YYYY-MM-DD') FROM customers;"
+    );
 
     res.send(customer.rows);
   } catch (error) {
