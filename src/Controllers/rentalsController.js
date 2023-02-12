@@ -92,3 +92,46 @@ export async function inserirAluguel(req, res) {
     res.status(500).send(error.message);
   }
 }
+
+export async function finalizarAluguel(req, res) {
+  const id = parseInt(req.params.id);
+  const data = dayjs().format("YYYY-MM-DD");
+
+  try {
+    const queryAluguel = `SELECT rentals.*, games."pricePerDay" 
+    FROM rentals JOIN games ON rentals."gameId" = games.id WHERE rentals.id = $1`;
+    const aluguel = await db.query(queryAluguel, [id]);
+
+    if (aluguel.rows.length === 0) {
+      return res.sendStatus(404);
+    }
+
+    if (aluguel.rows[0].returnDate !== null) {
+      return res.sendStatus(400);
+    }
+
+    aluguel.rows[0].returnDate = dayjs().format("YYYY-MM-DD");
+    aluguel.rows[0].rentDate = dayjs(aluguel.rows[0].rentDate);
+
+    const aux = aluguel.rows[0].rentDate.add(aluguel.rows[0].daysRented, "day");
+
+    if (aux.isBefore(aluguel.rows[0].returnDate)) {
+      aluguel.rows[0].delayFee = -(
+        aux.diff(aluguel.rows[0].returnDate, "days") *
+        aluguel.rows[0].pricePerDay
+      );
+    } else {
+      aluguel.rows[0].delayFee = 0;
+    }
+
+    const queryInsercao = `UPDATE rentals 
+    SET "delayFee" = $1, "rentDate" = $2, "returnDate" = $3 
+    WHERE id = $4`;
+
+    const insercao = await db.query(queryInsercao, [aluguel.rows[0].delayFee, aluguel.rows[0].rentDate, aluguel.rows[0].returnDate, aluguel.rows[0].id])
+
+    res.status(200).send("");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
