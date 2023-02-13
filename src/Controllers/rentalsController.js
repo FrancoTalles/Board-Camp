@@ -93,6 +93,26 @@ export async function inserirAluguel(req, res) {
   }
 }
 
+export async function apagarAluguel(req, res) {
+  const { id } = req.params;
+
+  const queryExistente = `SELECT * FROM rentals WHERE id = $1;`;
+  const rentalExistente = await db.query(queryExistente, [id]);
+
+  if (rentalExistente.rowCount === 0) {
+    return res.sendStatus(404);
+  }
+
+  if (rentalExistente.rows[0].returnDate === null) {
+    return res.sendStatus(400);
+  }
+
+  const queryApagar = `DELETE FROM rentals WHERE id = $1;`;
+  const apagar = await db.query(queryApagar, [id]);
+
+  res.sendStatus(200);
+}
+
 export async function finalizarAluguel(req, res) {
   const id = parseInt(req.params.id);
   const data = dayjs().format("YYYY-MM-DD");
@@ -128,7 +148,12 @@ export async function finalizarAluguel(req, res) {
     SET "delayFee" = $1, "rentDate" = $2, "returnDate" = $3 
     WHERE id = $4`;
 
-    const insercao = await db.query(queryInsercao, [aluguel.rows[0].delayFee, aluguel.rows[0].rentDate, aluguel.rows[0].returnDate, aluguel.rows[0].id])
+    const insercao = await db.query(queryInsercao, [
+      aluguel.rows[0].delayFee,
+      aluguel.rows[0].rentDate,
+      aluguel.rows[0].returnDate,
+      aluguel.rows[0].id,
+    ]);
 
     res.status(200).send("");
   } catch (error) {
