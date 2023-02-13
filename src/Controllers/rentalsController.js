@@ -110,7 +110,7 @@ export async function finalizarAluguel(req, res) {
       return res.sendStatus(400);
     }
 
-    aluguel.rows[0].returnDate = dayjs().format("YYYY-MM-DD");
+    aluguel.rows[0].returnDate = data;
     aluguel.rows[0].rentDate = dayjs(aluguel.rows[0].rentDate);
 
     const aux = aluguel.rows[0].rentDate.add(aluguel.rows[0].daysRented, "day");
